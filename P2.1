@@ -16,7 +16,7 @@ print_upper_part() {
 
 print_lower_part() {
     local n=$1
-    for i in $(seq 1 $((n-1)))
+    for i in $(seq 1 $n)
     do
         for j in $(seq 1 $((n-i)))
         do
@@ -29,7 +29,6 @@ print_lower_part() {
         echo ""
     done
 }
-
 
 echo -n "Enter number: "
 read number
