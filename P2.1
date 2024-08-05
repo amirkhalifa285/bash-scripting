@@ -1,0 +1,42 @@
+print_upper() {
+local n=$1
+for i in $(seq 0 $((n-1)))
+do
+	for j in $(seq 0 $((i-1)))
+	do
+		echo -n " "
+	done
+	for j in $(seq 1 $((2*(n-i))))
+	do
+		echo -n "*"
+	done
+	echo ""
+done
+}
+
+print_lower() {
+local n=$1
+for i in $(seq 1 $((n-1)))
+do
+	for j in $(seq 1 $((n-i)))
+	do
+		echo -n " "
+	done
+	for j in $(seq 1 $((2*(i+1))))
+	do
+		echo -n "*"
+	done
+	echo ""
+done
+}
+
+echo -n "Enter number: "
+read number
+
+if ! [[ "$number" =~ ^[0-9]+$ ]] || [ "$number" -le 0 ]
+then
+	echo "Enter positive number"
+fi
+
+print_upper $number
+print_lower $number
