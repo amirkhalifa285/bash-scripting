@@ -1,6 +1,6 @@
-if [ "$#" -lt 3 ]
-then
-	echo "missing parameters"
+if [ "$#" -lt 3 ]; then
+    echo "Usage: $0 start_index end_index word1 [word2 ... wordN]"
+    exit 1
 fi
 
 start_index=$1
@@ -8,30 +8,29 @@ end_index=$2
 
 shift 2
 
-
 is_repeated_substring() {
-word=$1
-length=${#word}
-
-i=$start_index
-while [ $i -le $end_index ]
-do
-	if [ $((length % i)) -eq 0 ]
-	then
-		substring=${word:0:length/i}
-		repeated=""
-		count=1
-		while [ $count -le $i ]
-		do
-			repeated="${repeated}${substring}"
-			count=$((count + 1))
-		done
-		if [ "$repeated" = "$word" ]
-		then
-			echo "$word"
-			return
-		fi
-	fi
-	i=$((i+1))
-done
+    word=$1
+    length=${#word}
+    
+    i=$start_index
+    while [ $i -le $end_index ]; do
+        if [ $((length % i)) -eq 0 ]; then
+            substring=${word:0:length/i}
+            repeated=""
+            count=1
+            while [ $count -le $i ]; do
+                repeated="${repeated}${substring}"
+                count=$((count + 1))
+            done
+            if [ "$repeated" = "$word" ]; then
+                echo "$word"
+                return
+            fi
+        fi
+        i=$((i + 1))
+    done
 }
+
+for word in "$@"; do
+    is_repeated_substring "$word"
+done

@@ -1,0 +1,50 @@
+if [ "$#" -lt 3 ]
+then
+	echo "missing parameters"
+fi
+
+i=$1
+file1=$2
+
+shift 2
+
+chars="$@"
+
+count_occurrences() {
+local word=$1
+local char=$2
+local count=0
+
+while [ -n "$word" ]
+do
+	if [ "${word:0:1}" = "$char" ]
+	then
+		count=$((count + 1))
+	fi
+	word=${word:1}
+done
+echo $count
+}
+
+check_word() {
+local word=$1
+local count
+
+for char in $chars
+do
+	count=$(count_occurrences "$word" "$char")
+	if [ "$count" -ne "$i" ]
+	then
+		return 1
+	fi
+done
+return 0
+}
+
+grep -o -E '\w+' "$file1" | sort -u | while read -r word
+do
+	if check_word "$word"
+	then
+		echo "$word"
+	fi
+done
