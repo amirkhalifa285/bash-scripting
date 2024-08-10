@@ -12,14 +12,14 @@ then
     exit 1
 fi
 
-
 while IFS= read -r line
 do
-    first_word=$(echo "$line" | sed -E 's/^([a-zA-Z0-9_]+).*/\1/')
+    first_word=$(echo "$line" | sed -E 's/^([a-zA-Z0-9_@]+).*/\1/')
     
-    last_word=$(echo "$line" | sed -E 's/.*[[:space:]]([a-zA-Z0-9_]+)$/\1/')
+    last_word=$(echo "$line" | sed -E 's/.*[[:space:]]([a-zA-Z0-9_@]+)$/\1/')
 
-    if echo "$last_word" | grep -q "$first_word"; then
+    if echo "$last_word" | grep -Eq "$(echo "$first_word" | grep -o . | tr -d '\n' | sed 's/\(.\)/\1\{2,\}/g')"
+    then
         echo "$line"
     fi
 done < "$file"
