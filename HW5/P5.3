@@ -19,18 +19,17 @@ do
     last_word=$(echo "$line" | sed -E 's/.*[[:space:]]([a-zA-Z0-9_@]+)$/\1/')
     
     match_found=false
-    while [ -n "$first_word" ]
+    
+    for length in $(seq 1 ${#first_word})
     do
-        char=${first_word:0:1}  
-        first_word=${first_word:1}  
-        if echo "$last_word" | grep -q "${char}${char}"
+        substring=${first_word:0:$length}
+        if echo "$last_word" | grep -q "${substring}${substring}"
         then
             match_found=true
             break
         fi
     done
     
-
     if [ "$match_found" = true ]
     then
         echo "$line"
