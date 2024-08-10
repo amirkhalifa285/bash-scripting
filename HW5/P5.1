@@ -1,0 +1,57 @@
+word_list=()
+dir_list=()
+is_dir_list=0
+
+for arg in "$@"
+do
+	if [ "$arg" == "-dirs" ]
+	then
+		is_dir_list=1
+		continue
+	fi
+	
+	if [ $is_dir_list -eq 0 ]
+	then
+		word_list+=("$arg")
+	else
+		dir_list+=("$arg")
+	fi
+done
+
+count_occurrences() {
+local word=$1
+local dir=$2
+grep -rohw "$word" "$dir" | wc -l
+}
+
+check_all_dirs() {
+local word=$1
+for dir in "${dir_list[@]}"
+do
+	if [ "$(count_occurrences "$word" "$dir")" -eq 0 ]
+	then
+		echo "NOTALL"
+		return
+	fi
+done
+echo "ALL"
+}
+
+for word in "${word_list[@]}"
+do
+	line="$word"
+	all_in_all_dirs="ALL"
+
+	for dir in "${dir_list[@]}"
+	do
+		count=$(count_occurrences "$word" "$dir")
+		line+="$count"
+		if [ "$count" -eq 0 ]
+		then
+			all_in_all_dirs="NOTALL"
+		fi
+	done
+	line+="$all_in_all_dirs"
+	echo "$line"
+done
+done
