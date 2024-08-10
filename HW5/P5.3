@@ -17,8 +17,21 @@ do
     first_word=$(echo "$line" | sed -E 's/^([a-zA-Z0-9_@]+).*/\1/')
     
     last_word=$(echo "$line" | sed -E 's/.*[[:space:]]([a-zA-Z0-9_@]+)$/\1/')
+    
+    match_found=false
+    while [ -n "$first_word" ]
+    do
+        char=${first_word:0:1}  
+        first_word=${first_word:1}  
+        if echo "$last_word" | grep -q "${char}${char}"
+        then
+            match_found=true
+            break
+        fi
+    done
+    
 
-    if echo "$last_word" | grep -Eq "$(echo "$first_word" | grep -o . | tr -d '\n' | sed 's/\(.\)/\1\{2,\}/g')"
+    if [ "$match_found" = true ]
     then
         echo "$line"
     fi
