@@ -20,18 +20,28 @@ do
     
     match_found=false
     
-    for length in $(seq 1 ${#first_word})
+    first_word_length=${#first_word}
+    start=0
+    while [ $start -lt $first_word_length ]
     do
-        substring=${first_word:0:$length}
-        if echo "$last_word" | grep -q "${substring}${substring}"
-        then
-            match_found=true
-            break
-        fi
+        length=2
+        while [ $((start + length)) -le $first_word_length ]
+        do
+            substring=${first_word:start:length}
+            
+            if echo "$last_word" | grep -q "${substring}${substring}"
+            then
+                match_found=true
+                break 2  
+            fi
+            length=$((length + 1))
+        done
+        start=$((start + 1))
     done
     
-    if [ "$match_found" = true ]
-    then
+
+    if [ "$match_found" = true ] then
         echo "$line"
     fi
+    
 done < "$file"
