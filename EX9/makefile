@@ -1,7 +1,10 @@
-CC = gcc
-CFLAGS = -Wall -g
+# Makefile for compiling loader, A, and B
 
-all: loader A B
+CC = gcc
+CFLAGS = -Wall
+TARGETS = loader A B
+
+all: $(TARGETS)
 
 loader: loader.c
 	$(CC) $(CFLAGS) -o loader loader.c
@@ -13,4 +16,5 @@ B: B.c
 	$(CC) $(CFLAGS) -o B B.c
 
 clean:
-	rm -f loader A B file_B.txt *.o
+	rm -f $(TARGETS)
+

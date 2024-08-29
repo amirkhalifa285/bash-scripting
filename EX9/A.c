@@ -1,21 +1,31 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
 
-int main() {
-    FILE *temp_file = fopen("temp_A_output.txt", "w");
-    if (temp_file == NULL) {
-        perror("Failed to open temporary file for writing");
-        return 1;
+int main(int argc, char* argv[]) {
+    int pipeAB_read_fd = atoi(argv[1]);
+    int pipeBA_write_fd = atoi(argv[2]);
+
+    FILE* fileA = fopen("fileA.txt", "r");
+    if (!fileA) {
+        perror("Failed to open fileA.txt");
+        exit(EXIT_FAILURE);
     }
 
-    fprintf(temp_file, "This is the first line of file A.\n");
-    fprintf(temp_file, "This is the second line of file A.\n");
-    fprintf(temp_file, "This is the third line of file A.\n");
+    char buffer[256];
+    while (fgets(buffer, sizeof(buffer), fileA) != NULL) {
+        write(pipeBA_write_fd, buffer, strlen(buffer));
 
-    fclose(temp_file);
-    printf("Process A: Successfully wrote to temp_A_output.txt\n");
+        char ack[256];
+        read(pipeAB_read_fd, ack, sizeof(ack));
+        printf("Process A received: %s\n", ack);
 
-    printf("Process A: My life has reached its worthy conclusion. Goodbye.\n");
+        printf("My life has come to a worthy conclusion. Goodbye.\n");
+        break; // Process A "commits suicide"
+    }
 
+    fclose(fileA);
     return 0;
 }
+

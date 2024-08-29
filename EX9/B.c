@@ -1,30 +1,28 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
 
-int main() {
-    FILE *temp_file = fopen("temp_A_output.txt", "r");
-    if (temp_file == NULL) {
-        perror("Failed to open temporary file for reading");
-        return 1;
-    }
+int main(int argc, char* argv[]) {
+    int pipeAB_write_fd = atoi(argv[1]);
+    int pipeBA_read_fd = atoi(argv[2]);
 
-    FILE *file_B = fopen("file_B.txt", "w");
-    if (file_B == NULL) {
-        perror("Failed to open file_B.txt for writing");
-        fclose(temp_file); // Don't forget to close the temp file if opened
-        return 1;
+    FILE* fileB = fopen("fileB.txt", "a");
+    if (!fileB) {
+        perror("Failed to open fileB.txt");
+        exit(EXIT_FAILURE);
     }
 
     char buffer[256];
-    while (fgets(buffer, sizeof(buffer), temp_file)) {
-        fprintf(file_B, "%s", buffer); // Write to file_B.txt
-        printf("Process B: %s", buffer); // Print to console
-    }
+    read(pipeBA_read_fd, buffer, sizeof(buffer));
+    fprintf(fileB, "%s", buffer);
+    printf("Process B: %s", buffer);
+    fflush(fileB);
 
-    fclose(temp_file);
-    fclose(file_B);
+    char* ack = "Thank you for the information, I received it.";
+    write(pipeAB_write_fd, ack, strlen(ack) + 1);
 
-    printf("Process B: Thank you for the data, A!\n");
-
+    fclose(fileB);
     return 0;
 }
+
